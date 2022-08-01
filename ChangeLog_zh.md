@@ -1,5 +1,16 @@
 # 更新
 
+## v0.7.0
+- 整合了 HPM_SDK v0.12.1 release
+  - 注:
+    - HPM_SDK根目录下 *docs*, *samples*, *middleware* 和 *cmake* 目录已移除
+- 新增示例:
+  - i2c_demo
+  - usb_host_msc_udisk
+- Bug 修复:
+  - SD卡 multi-block 读/写 问题
+  - lv_demo_widgets 频率过慢问题
+
 ## v0.5.0
 
 - 整合了SDK v0.10.0

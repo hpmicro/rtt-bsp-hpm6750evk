@@ -6,7 +6,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
@@ -167,12 +167,12 @@
 #define RT_LWIP_UDP_PCB_NUM 4
 #define RT_LWIP_TCP_PCB_NUM 4
 #define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8196
-#define RT_LWIP_TCP_WND 8196
+#define RT_LWIP_TCP_SND_BUF 14600
+#define RT_LWIP_TCP_WND 14600
 #define RT_LWIP_TCPTHREAD_PRIORITY 10
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 4096
-#define RT_LWIP_ETHTHREAD_PRIORITY 8
+#define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 4096
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 16
 #define LWIP_NETIF_STATUS_CALLBACK 1
@@ -286,10 +286,6 @@
 
 /* end of enhanced kernel services */
 
-/* POSIX extension functions */
-
-/* end of POSIX extension functions */
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
 /* end of acceleration: Assembly language or algorithmic acceleration packages */
@@ -305,6 +301,10 @@
 
 /* peripheral libraries and drivers */
 
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */

@@ -233,20 +233,21 @@ static void phy_detection(void *parameter)
             if (msg.value == PHY_ID1)
             {
                 phy_dev->phy.addr = i;
-                break;
+                LOG_D("Found a PHY device[address:0x%02x].\n", phy_dev->phy.addr);
+                return;
             }
         }
 
+        phy_dev->phy.addr = 0xffff;
         detected_count++;
         rt_thread_mdelay(1000);
 
-        if (detected_count > 12)
+        if (detected_count > 3)
         {
-            LOG_E("No PHY device was detected, please check your hardware!\n");
+            LOG_E("No any PHY device is detected! Please check your hardware!\n");
+            return;
         }
     }
-
-    LOG_D("Found a PHY, address:0x%02x\n", phy_dev->phy.addr);
 }
 
 static void phy_monitor_thread_entry(void *args)

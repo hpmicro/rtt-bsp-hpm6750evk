@@ -1,9 +1,21 @@
 # Change Log
-
-## v0.5.0
-- Integrated the SDK v0.10.0 release
+## v0.7.0
+- Integrated the HPM_SDK v0.12.1 release
   - Note:
-    - The docs folder in SDK root directory were removed
+    - The *docs*, *samples*, *middleware* and *cmake* folders were removed
+- Updated:
+  - Switched toolchain to RISCV-GCC-RV32
+  - Improved throughput for 100M Ethernet
+- Added examples:
+  - i2c_demo
+  - usb_host_msc_udisk
+- Fixed:
+  - SD multi-block read/write issue
+  - lv_demo_widgets slow FPS issue
+## v0.5.0
+- Integrated the HPM_SDK v0.10.0 release
+  - Note:
+    - The *docs* folder in SDK root directory were removed
 - Updated
   - Upgraded toolchain to GCC 11.1.0
 - Added examples:

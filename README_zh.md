@@ -15,3 +15,5 @@ HPM6750EVK 开板的 RT-Thread Studio 板级支持包
 - ethernet_demo
 - ethernet_ptp_master_demo
 - ethernet_ptp_slave_demo
+- i2c_demo
+- usb_host_msc_udisk

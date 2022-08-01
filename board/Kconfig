@@ -274,17 +274,15 @@ menu "On-chip Peripheral Drivers"
 	   			bool "Enable GPTMR7"
 	   			default n
         endif
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         default n
+        select RT_USING_I2C if BSP_USING_I2C
         if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0"
                     default y
-
-            config BSP_USING_I2C3
-                bool "Enable I2C3"
-                    default n
         endif
 
     menuconfig BSP_USING_DRAM
@@ -310,6 +308,9 @@ menu "On-chip Peripheral Drivers"
        if BSP_USING_USB
        		config BSP_USING_USB_DEVICE
                 bool "Enable USB Device"
+                    default n
+            config BSP_USING_USB_HOST
+                bool "Enable USB Host"
                     default n
        endif
        

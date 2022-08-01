@@ -116,9 +116,12 @@ FAL_RAMFUNC static int read(long offset, uint8_t *buf, size_t size)
     uint32_t aligned_start = HPM_L1C_CACHELINE_ALIGN_DOWN(flash_addr);
     uint32_t aligned_end = HPM_L1C_CACHELINE_ALIGN_UP(flash_addr + size);
     uint32_t aligned_size = aligned_end - aligned_start;
-    l1c_dc_invalidate(aligned_start, aligned_size);
 
-    (void) memcpy(buf, (void*) flash_addr, size);
+    rt_base_t level = rt_hw_interrupt_disable();
+    l1c_dc_invalidate(aligned_start, aligned_size);
+    rt_hw_interrupt_enable(level);
+
+    (void) rt_memcpy(buf, (void*) flash_addr, size);
 
     return size;
 }
@@ -170,7 +173,7 @@ FAL_RAMFUNC static int write(long offset, const uint8_t *buf, size_t size)
     {
         uint32_t write_size_in_page = page_size - offset_in_page;
         uint32_t write_page_size = MIN(write_size_in_page, size);
-        (void) memcpy(buf_32, buf, write_page_size);
+        (void) rt_memcpy(buf_32, buf, write_page_size);
         write_size = write_unaligned_page_data(offset, buf_32, write_page_size);
         if (write_size < 0)
         {
@@ -186,7 +189,7 @@ FAL_RAMFUNC static int write(long offset, const uint8_t *buf, size_t size)
     while (remaining_size > 0)
     {
         write_size = MIN(remaining_size, sizeof(buf_32));
-        memcpy(buf_32, buf, write_size);
+        rt_memcpy(buf_32, buf, write_size);
         src = &buf_32[0];
 
         FAL_ENTER_CRITICAL();
