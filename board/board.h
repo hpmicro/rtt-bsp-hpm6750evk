@@ -13,6 +13,7 @@
 #include "hpm_soc.h"
 #include "hpm_soc_feature.h"
 #include "pinmux.h"
+#include "hpm_lcdc_drv.h"
 
 #define BOARD_NAME "hpm6750evk"
 #define BOARD_UF2_SIGNATURE (0x0A4D5048UL)
@@ -74,8 +75,8 @@
 /* sdram section */
 #define BOARD_SDRAM_ADDRESS  (0x40000000UL)
 #define BOARD_SDRAM_SIZE     (32*SIZE_1MB)
-#define BOARD_SDRAM_CS       DRAM_SDRAM_CS0
-#define BOARD_SDRAM_PORT_SIZE DRAM_SDRAM_PORT_SIZE_32_BITS
+#define BOARD_SDRAM_CS       FEMC_SDRAM_CS0
+#define BOARD_SDRAM_PORT_SIZE FEMC_SDRAM_PORT_SIZE_32_BITS
 #define BOARD_SDRAM_REFRESH_COUNT (8192UL)
 #define BOARD_SDRAM_REFRESH_IN_MS (64UL)
 #define BOARD_SDRAM_DATA_WIDTH_IN_BYTE (4UL)
@@ -215,24 +216,40 @@
 #define BOARD_APP_I2S_BASE HPM_I2S0
 #define BOARD_APP_I2S_DATA_LINE      (2U)
 #define BOARD_APP_I2S_CLK_NAME clock_i2s0
+#define BOARD_APP_AUDIO_CLK_SRC clock_source_pll3_clk0
+#define BOARD_APP_AUDIO_CLK_SRC_NAME clk_pll3clk0
 
 /* enet section */
 #define BOARD_ENET0_RST_GPIO       HPM_GPIO0
 #define BOARD_ENET0_RST_GPIO_INDEX GPIO_DO_GPIOF
 #define BOARD_ENET0_RST_GPIO_PIN   (0U)
-#define BOARD_ENET0_INF            enet_inf_rgmii
-#define BOARD_ENET0                HPM_ENET0
-#define BOARD_ENET0_TX_DLY         (0U)
-#define BOARD_ENET0_RX_DLY         (21U)
-#define BOARD_ENET0_PTP_CLOCK      (clock_ptp0)
+#define BOARD_ENET0_INF             (1U)  /* 0: RMII, 1: RGMII */
+#define BOARD_ENET0_INT_REF_CLK     (0U)
+#define BOARD_ENET0_PHY_RST_TIME    (30)
+#if BOARD_ENET0_INF
+#define BOARD_ENET0_TX_DLY          (0U)
+#define BOARD_ENET0_RX_DLY          (21U)
+#endif
+#if __USE_ENET_PTP
+#define BOARD_ENET0_PTP_CLOCK       (clock_ptp0)
+#endif
 
 #define BOARD_ENET1_RST_GPIO        HPM_GPIO0
 #define BOARD_ENET1_RST_GPIO_INDEX  GPIO_DO_GPIOE
 #define BOARD_ENET1_RST_GPIO_PIN    (26U)
-#define BOARD_ENET1_INF             enet_inf_rmii
-#define BOARD_ENET1                 HPM_ENET1
+
+#define BOARD_ENET1_INF             (0U)  /* 0: RMII, 1: RGMII */
 #define BOARD_ENET1_INT_REF_CLK     (1U)
+#define BOARD_ENET1_PHY_RST_TIME    (30)
+
+#if BOARD_ENET1_INF
+#define BOARD_ENET1_TX_DLY          (0U)
+#define BOARD_ENET1_RX_DLY          (0U)
+#endif
+
+#if __USE_ENET_PTP
 #define BOARD_ENET1_PTP_CLOCK       (clock_ptp1)
+#endif
 
 /* ADC section */
 #define BOARD_APP_ADC12_NAME "ADC0"
@@ -427,10 +444,10 @@ void board_init_console(void);
 void board_init_uart(UART_Type *ptr);
 void board_init_i2c(I2C_Type *ptr);
 void board_init_lcd(void);
-
+void board_panel_para_to_lcdc(lcdc_config_t *config);
 void board_init_can(CAN_Type *ptr);
 
-uint32_t board_init_dram_clock(void);
+uint32_t board_init_femc_clock(void);
 
 void board_init_sdram_pins(void);
 void board_init_gpio_pins(void);
@@ -483,8 +500,10 @@ void board_init_adc16_pins(void);
 void board_init_usb_pins(void);
 void board_usb_vbus_ctrl(uint8_t usb_index, uint8_t level);
 
+uint8_t    board_enet_get_dma_pbl(ENET_Type *ptr);
 hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
 hpm_stat_t board_reset_enet_phy(ENET_Type *ptr);
+hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
 hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal);
 
 hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr);

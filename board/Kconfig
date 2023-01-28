@@ -285,7 +285,7 @@ menu "On-chip Peripheral Drivers"
                     default y
         endif
 
-    menuconfig BSP_USING_DRAM
+    menuconfig BSP_USING_FEMC
        bool "Enable DRAM"
        default y
     menuconfig INIT_EXT_RAM_FOR_DATA
@@ -301,6 +301,26 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
 	default n
+
+    menuconfig BSP_USING_DAO
+        bool "Enable Audio DAO play"
+        default n
+        select RT_USING_AUDIO if BSP_USING_DAO
+
+    menuconfig BSP_USING_PDM
+        bool "Enable Audio PDM record"
+        default n
+        select RT_USING_AUDIO if BSP_USING_PDM
+
+    menuconfig BSP_USING_I2S
+        bool "Enable Audio I2S device"
+        default n
+        select RT_USING_AUDIO if BSP_USING_I2S
+        if BSP_USING_I2S
+            config BSP_USING_I2S0
+                bool "Enable I2S0"
+                    default y
+        endif
 
     menuconfig BSP_USING_USB
        bool "Enable USB"

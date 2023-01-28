@@ -1,4 +1,18 @@
 # Change Log
+
+## v1.0.0
+- Updated:
+  - Integrated the __hpm_sdk v1.0.0__ releease
+    - Note:
+      - The *docs*, *samples*, *middleware* and *cmake* folders were removed
+  - Improved drv_uart_v2 implementation
+  - Implemented audio driver
+  - Migrated to rt-thread v4.1.0
+  - Added support for JLink Probe
+ - Added examples:
+   - audio_i2s_demo
+   - audio_pdm_dao_demo
+
 ## v0.7.0
 - Integrated the HPM_SDK v0.12.1 release
   - Note:

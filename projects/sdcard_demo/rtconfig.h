@@ -279,7 +279,7 @@
 #define BSP_USING_RTC
 #define BSP_USING_SDXC
 #define BSP_USING_SDXC1
-#define BSP_USING_DRAM
+#define BSP_USING_FEMC
 #define INIT_EXT_RAM_FOR_DATA
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */

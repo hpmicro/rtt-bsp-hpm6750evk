@@ -280,7 +280,7 @@
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
 #define BSP_USING_RTC
-#define BSP_USING_DRAM
+#define BSP_USING_FEMC
 #define INIT_EXT_RAM_FOR_DATA
 #define BSP_USING_USB
 #define BSP_USING_USB_DEVICE

@@ -9,6 +9,7 @@ src = Split("""
     pinmux.c
     eth_phy_port.c
     fal_flash_port.c
+    hpm_sgtl5000.c
 """)
 
 CPPPATH = [cwd]

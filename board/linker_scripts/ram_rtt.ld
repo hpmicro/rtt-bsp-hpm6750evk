@@ -25,16 +25,16 @@ MEMORY
 
 SECTIONS
 {
+    .start : {
+        . = ALIGN(8);
+        KEEP(*(.start))
+    } > AXI_SRAM
+    
     .vectors : {
         . = ALIGN(8);
         KEEP(*(.isr_vector))
         KEEP(*(.vector_table))
         . = ALIGN(8);
-    } > AXI_SRAM
-
-    .start : {
-        . = ALIGN(8);
-        KEEP(*(.start))
     } > AXI_SRAM
 
     .text : {

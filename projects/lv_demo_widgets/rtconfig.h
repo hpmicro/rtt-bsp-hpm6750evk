@@ -226,7 +226,7 @@
 #define BSP_USING_GPTMR
 #define BSP_USING_I2C
 #define BSP_USING_I2C0
-#define BSP_USING_DRAM
+#define BSP_USING_FEMC
 #define INIT_EXT_RAM_FOR_DATA
 
 #endif

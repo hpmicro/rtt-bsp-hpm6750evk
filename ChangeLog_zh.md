@@ -1,5 +1,18 @@
 # 更新
 
+## v0.1.0
+- 更新：
+  - 整合了 HPM_SDK v0.13.1 release
+    - 注:
+      - HPM_SDK根目录下 *docs*, *samples*, *middleware* 和 *cmake* 目录已移除
+  - 基于hpm_dma_manager重新实现了drv_uart_v2
+  - 实现了audio驱动
+  - 迁移到了rt-thread v4.1.0
+  - 增加了对JLINK调试器的支持
+- 新增示例：
+  - audio_i2s_demo
+  - audio_pdm_dao_demo
+
 ## v0.7.0
 - 整合了 HPM_SDK v0.12.1 release
   - 注:
