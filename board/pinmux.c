@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -451,8 +451,25 @@ void init_sdxc_pins(SDXC_Type *ptr, bool use_1v8)
         HPM_IOC->PAD[IOC_PAD_PD15].FUNC_CTL = IOC_PD15_FUNC_CTL_GPIO_D_15;
         HPM_IOC->PAD[IOC_PAD_PD15].PAD_CTL = pad_ctl;
         HPM_GPIO0->OE[GPIO_OE_GPIOD].CLEAR = 1UL << BOARD_APP_SDCARD_CDN_GPIO_PIN;
-
     }
+}
+
+void init_sdxc_power_pin(SDXC_Type *ptr)
+{
+    /* Not supported by current board */
+}
+void init_sdxc_vsel_pin(SDXC_Type *ptr)
+{
+    /* Not suppored by current board */
+}
+
+void init_sdxc_card_detection_pin(SDXC_Type *ptr)
+{
+    /* CDN */
+    HPM_IOC->PAD[IOC_PAD_PD15].FUNC_CTL = IOC_PD15_FUNC_CTL_GPIO_D_15;
+    HPM_IOC->PAD[IOC_PAD_PD15].PAD_CTL = IOC_PAD_PAD_CTL_DS_SET(7) | IOC_PAD_PAD_CTL_PE_SET(1) |
+                       IOC_PAD_PAD_CTL_PS_SET(1);
+    HPM_GPIO0->OE[GPIO_OE_GPIOD].CLEAR = 1UL << BOARD_APP_SDCARD_CDN_GPIO_PIN;
 }
 
 void init_clk_obs_pins(void)

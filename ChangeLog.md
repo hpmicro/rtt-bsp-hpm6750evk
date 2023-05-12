@@ -1,6 +1,22 @@
 # Change Log
 
+## v1.1.0
+
+- Integrated hpm_sdk v1.1.0
+  - Note:
+    - the docs, middleware, scripts, samples folder in SDK root directory were removed
+- Fixed:
+  - typos in the drv_i2c.c
+  - hw_timer cannot work due to SDK driver update
+  - RT-Thread Studio project compiling error after enabling C++ support
+  - iperf performance is low if working as client mode
+  - adc driver may return incorrect value
+  - pwm channel may not work as expected
+  - uart_dma_demo doesn't work
+  - eMMC to TF card doesn't work
+
 ## v1.0.0
+
 - Updated:
   - Integrated the __hpm_sdk v1.0.0__ releease
     - Note:
@@ -9,11 +25,12 @@
   - Implemented audio driver
   - Migrated to rt-thread v4.1.0
   - Added support for JLink Probe
- - Added examples:
-   - audio_i2s_demo
-   - audio_pdm_dao_demo
+- Added examples:
+  - audio_i2s_demo
+  - audio_pdm_dao_demo
 
 ## v0.7.0
+
 - Integrated the HPM_SDK v0.12.1 release
   - Note:
     - The *docs*, *samples*, *middleware* and *cmake* folders were removed
@@ -26,7 +43,9 @@
 - Fixed:
   - SD multi-block read/write issue
   - lv_demo_widgets slow FPS issue
+
 ## v0.5.0
+
 - Integrated the HPM_SDK v0.10.0 release
   - Note:
     - The *docs* folder in SDK root directory were removed

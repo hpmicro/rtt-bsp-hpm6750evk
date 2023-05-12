@@ -15,6 +15,7 @@
 #include "drv_i2s.h"
 #include "wav_header.h"
 #include "hpm_sgtl5000.h"
+#include "hpm_clock_drv.h"
 #include <dfs_fs.h>
 #include <dfs_posix.h>
 
@@ -108,6 +109,12 @@ static int codec_recordwav(int argc, char *argv[])
     i2s_caps.main_type               = AUDIO_TYPE_INPUT;
     i2s_caps.sub_type                = AUDIO_DSP_PARAM;
     i2s_caps.udata.config.samplerate = CODEC_I2S_SAMPLERATE;
+    if ((i2s_caps.udata.config.samplerate % 44100) == 0) {
+        /* clock_aud1 has been configured for 44100*n sample rate*/
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud1);
+    } else {
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
+    }
     i2s_caps.udata.config.samplebits = CODEC_I2S_SAMPLEBITS;
     i2s_caps.udata.config.channels   = CODEC_I2S_CHANNEL;
     rt_device_control(i2s_dev, AUDIO_CTL_CONFIGURE, &i2s_caps);
@@ -254,6 +261,12 @@ static int codec_playwav(int argc, char *argv[])
         i2s_caps.udata.config.channels = CODEC_I2S_CHANNEL;
     } else {
         i2s_caps.udata.config.channels   = info->fmt_chunk.channels;
+    }
+    if ((info->fmt_chunk.sample_rate % 44100) == 0) {
+        /* clock_aud1 has been configured for 44100*n sample rate*/
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud1);
+    } else {
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
     }
     rt_device_control(i2s_dev, AUDIO_CTL_CONFIGURE, &i2s_caps);
 

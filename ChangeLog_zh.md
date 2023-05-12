@@ -1,6 +1,22 @@
 # 更新
 
-## v0.1.0
+## v1.1.0
+
+- 整合了hpm_sdk v1.1.0
+  - 注：
+    - SDK根目录下的docs,middleware,samples, scripts等目录被移除
+- 修复：
+  - drv_i2c.c 中的拼写错误
+  - hw_timer 工作异常
+  - 开启C++支持后RT-Thread Studio工程编译失败
+  - iperf 作为客户端时性能低下
+  - ADC 驱动可能会返回错误的数据
+  - PWM 通道可能会工作不正常
+  - uart_dma_demo示例不工作
+  - eMMC转TF卡不工作
+
+## v1.0.0
+
 - 更新：
   - 整合了 HPM_SDK v0.13.1 release
     - 注:
@@ -14,6 +30,7 @@
   - audio_pdm_dao_demo
 
 ## v0.7.0
+
 - 整合了 HPM_SDK v0.12.1 release
   - 注:
     - HPM_SDK根目录下 *docs*, *samples*, *middleware* 和 *cmake* 目录已移除

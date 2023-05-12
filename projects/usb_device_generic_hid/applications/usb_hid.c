@@ -49,14 +49,6 @@ uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_t
     return 0;
 }
 
-void test(void)
-{
-    uint8_t echo_buf[1024];
-    while (1) {
-        tud_hid_report(2, echo_buf, 1024);
-    }
-}
-
 void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
 {
     uint8_t echo_buf[bufsize];
@@ -111,7 +103,7 @@ static uint8_t const desc_hid_report[] =
     #if   (CFG_TUSB_REPORT_ID_COUNT == 2)
         TUD_HID_REPORT_DESC_GENERIC_INOUT(CFG_TUD_HID_REPORT_SIZE - 1, HID_REPORT_ID(REPORT_ID_IN) HID_REPORT_ID(REPORT_ID_OUT))
     #elif (CFG_TUSB_REPORT_ID_COUNT == 1)
-        TUD_HID_REPORT_DESC_GENERICque_INOUT(CFG_TUD_HID_REPORT_SIZE - 1, HID_REPORT_ID(REPORT_ID_INOUT))
+        TUD_HID_REPORT_DESC_GENERIC_INOUT(CFG_TUD_HID_REPORT_SIZE - 1, HID_REPORT_ID(REPORT_ID_INOUT))
     #elif (CFG_TUSB_REPORT_ID_COUNT == 0)
         TUD_HID_REPORT_DESC_GENERIC_INOUT(CFG_TUD_HID_REPORT_SIZE)
     #endif

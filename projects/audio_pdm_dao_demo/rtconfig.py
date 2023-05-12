@@ -1,3 +1,6 @@
+# Copyright 2021-2022 hpmicro
+# SPDX-License-Identifier: BSD-3-Clause
+
 import os
 import sys
 
@@ -83,8 +86,5 @@ if PLATFORM == 'gcc':
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
     # module setting
-    CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
-    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
-    M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
-                                    ' -shared -fPIC -nostartfiles -static-libgcc'
+    CXXFLAGS =  CFLAGS + ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
+    CFLAGS = CFLAGS + ' -std=gnu11'
