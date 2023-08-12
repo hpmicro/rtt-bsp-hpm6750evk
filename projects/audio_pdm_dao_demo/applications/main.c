@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -251,7 +251,7 @@ int main(void)
     rt_thread_mdelay(2000);
 
     //挂载文件系统
-    if (dfs_mount("sd0", "/", "elm", 0, NULL) == 0)
+    if (dfs_mount("sd", "/", "elm", 0, NULL) == 0)
     {
         rt_kprintf("sd0 mounted to /\n");
     }

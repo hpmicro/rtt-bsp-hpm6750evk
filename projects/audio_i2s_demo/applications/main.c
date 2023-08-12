@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -47,6 +47,33 @@ static void wavheader_init(wav_header_t *header, uint32_t sample_rate, uint8_t c
     memcpy(header->data_chunk.id, "data", 4);
     header->data_chunk.datasize = datasize;
 }
+
+static int config_codec_i2s_clock(uint32_t sample_rate)
+{
+    switch (sample_rate) {
+    case 16000:
+        clock_set_source_divider(clock_aud0, clk_src_pll3_clk0, 75);
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
+        break;
+    case 32000:
+        clock_set_source_divider(clock_aud0, clk_src_pll3_clk0, 50);
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
+        break;
+    case 48000:
+        clock_set_source_divider(clock_aud0, clk_src_pll3_clk0, 25);
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
+        break;
+    case 44100:
+        clock_set_source_divider(clock_aud0, clk_src_pll3_clk0, 54);
+        clock_set_i2s_source(CODEC_I2S_CLK_NAME, clk_i2s_src_aud0);
+        break;
+    default:
+        return -RT_ERROR;
+    }
+
+    return 0;
+}
+
 
 static int codec_recordwav(int argc, char *argv[])
 {
@@ -99,6 +126,11 @@ static int codec_recordwav(int argc, char *argv[])
         rt_kprintf("open %s failed!\n", CODEC_I2S_DEV_NAME);
     }
 
+    if (config_codec_i2s_clock(CODEC_I2S_SAMPLERATE) != 0) {
+        rt_kprintf("failed to to configure suitable I2S clock!\n");
+        return -RT_ERROR;
+    }
+
     //配置CODEC使用的DATA_LINE
     i2s_caps.main_type               = AUDIO_TYPE_INPUT;
     i2s_caps.sub_type                = AUDIO_PARM_I2S_DATA_LINE;
@@ -130,7 +162,9 @@ static int codec_recordwav(int argc, char *argv[])
 
     sgtl5000_context.i2c_bus = i2c_bus;
     sgtl5000_context.slave_address = SGTL5000_I2C_ADDR;
-    sgtl_init(&sgtl5000_context, &sgtl5000_config);
+    if (sgtl_init(&sgtl5000_context, &sgtl5000_config) != status_success) {
+        rt_kprintf("Init Audio Codec failed\n");
+    }
 
     if (CODEC_I2S_CHANNEL != i2s_stereo) {
         channel_num = 1;
@@ -246,6 +280,11 @@ static int codec_playwav(int argc, char *argv[])
         rt_kprintf("open %s failed!\n", CODEC_I2S_DEV_NAME);
     }
 
+    if (config_codec_i2s_clock(info->fmt_chunk.sample_rate) != 0) {
+        rt_kprintf("failed to to configure suitable I2S clock!\n");
+        return -RT_ERROR;
+    }
+
     //配置CODEC使用的I2S
     i2s_caps.main_type               = AUDIO_TYPE_OUTPUT;
     i2s_caps.sub_type                = AUDIO_PARM_I2S_DATA_LINE;
@@ -257,10 +296,10 @@ static int codec_playwav(int argc, char *argv[])
     i2s_caps.udata.config.samplerate = info->fmt_chunk.sample_rate;
     i2s_caps.udata.config.samplebits = info->fmt_chunk.bit_per_sample;
     if (info->fmt_chunk.channels == 1) {
-        //单声道选用左或右声道播放
-        i2s_caps.udata.config.channels = CODEC_I2S_CHANNEL;
+        //单声道选用左声道播放
+        i2s_caps.udata.config.channels = i2s_mono_left;
     } else {
-        i2s_caps.udata.config.channels   = info->fmt_chunk.channels;
+        i2s_caps.udata.config.channels   = i2s_stereo;
     }
     if ((info->fmt_chunk.sample_rate % 44100) == 0) {
         /* clock_aud1 has been configured for 44100*n sample rate*/
@@ -281,7 +320,9 @@ static int codec_playwav(int argc, char *argv[])
 
     sgtl5000_context.i2c_bus = i2c_bus;
     sgtl5000_context.slave_address = SGTL5000_I2C_ADDR;
-    sgtl_init(&sgtl5000_context, &sgtl5000_config);
+    if (sgtl_init(&sgtl5000_context, &sgtl5000_config) != status_success) {
+        rt_kprintf("Init Audio Codec failed\n");
+    }
 
     while (1)
     {
@@ -315,7 +356,7 @@ int main(void)
     rt_thread_mdelay(2000);
 
     //挂载文件系统
-    if (dfs_mount("sd0", "/", "elm", 0, NULL) == 0)
+    if (dfs_mount("sd", "/", "elm", 0, NULL) == 0)
     {
         rt_kprintf("sd0 mounted to /\n");
     }
