@@ -161,7 +161,6 @@ CONFIG_RT_USING_SPI=y
 #
 # POSIX layer and C standard library
 #
-CONFIG_RT_USING_LIBC=y
 # CONFIG_RT_USING_PTHREADS is not set
 CONFIG_RT_LIBC_USING_TIME=y
 # CONFIG_RT_USING_MODULE is not set
@@ -442,6 +441,7 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # CONFIG_PKG_USING_FDT is not set
 # CONFIG_PKG_USING_CBOX is not set
 # CONFIG_PKG_USING_SNOWFLAKE is not set
+# CONFIG_PKG_USING_HASH_MATCH is not set
 # end of tools packages
 
 #

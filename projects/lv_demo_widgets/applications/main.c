@@ -3,8 +3,8 @@
  *
  * Change Logs:
  * Date         Author          Notes
- * 2022-02-14   HPMicro         first version
- * 2023-05-16   HPMicro         Change to LVGL 8.3.x
+ * 2022-02-14   hpmicro         first version
+ * 2023-06-29   hpmicro         Adapt LVGL 8.3.5, optimize performance
  *
  */
 

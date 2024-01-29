@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021 hpmicro
  *
  * Change Logs:
  * Date         Author          Notes

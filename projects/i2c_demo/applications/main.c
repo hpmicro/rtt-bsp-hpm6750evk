@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 HPMicro
+ * Copyright (c) 2022 hpmicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,8 +10,8 @@
 #include "rtt_board.h"
 #include "board.h"
 
-#define BOARD_APP_I2C_NAME "i2c0"
-#define EEPROM_ADDR_STR_LEN 4
+#define BOARD_APP_I2C_NAME    BOARD_EEPROM_I2C_NAME
+#define EEPROM_ADDR_STR_LEN   4
 rt_uint8_t device_addr;
 
 

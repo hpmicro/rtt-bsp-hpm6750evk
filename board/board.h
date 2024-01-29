@@ -265,6 +265,8 @@
 #define BOARD_APP_I2S_CLK_NAME clock_i2s0
 #define BOARD_APP_AUDIO_CLK_SRC clock_source_pll3_clk0
 #define BOARD_APP_AUDIO_CLK_SRC_NAME clk_pll3clk0
+#define BOARD_PDM_SINGLE_CHANNEL_MASK (1U)
+#define BOARD_PDM_DUAL_CHANNEL_MASK   (0x11U)
 
 /* enet section */
 #define BOARD_ENET0_RST_GPIO       HPM_GPIO0
@@ -526,20 +528,18 @@ uint32_t board_init_lcd_clock(void);
 
 uint32_t board_init_spi_clock(SPI_Type *ptr);
 
-uint32_t board_init_adc12_clock(ADC12_Type *ptr);
+uint32_t board_init_adc12_clock(ADC12_Type *ptr, bool clk_src_ahb);
 
 uint32_t board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb);
 
 uint32_t board_init_can_clock(CAN_Type *ptr);
 uint32_t board_init_gptmr_clock(GPTMR_Type *ptr);
 uint32_t board_init_i2s_clock(I2S_Type *ptr);
+uint32_t board_config_i2s_clock(I2S_Type *ptr, uint32_t sample_rate);
 uint32_t board_init_pdm_clock(void);
 uint32_t board_init_dao_clock(void);
 
-void board_init_sd_pins(SDXC_Type *ptr);
-uint32_t board_sd_configure_clock(SDXC_Type *ptr, uint32_t freq);
-void board_sd_switch_pins_to_1v8(SDXC_Type *ptr);
-bool board_sd_detect_card(SDXC_Type *ptr);
+uint32_t board_sd_configure_clock(SDXC_Type *ptr, uint32_t freq, bool need_inverse);
 void board_sd_power_switch(SDXC_Type *ptr, bool on_off);
 
 void board_init_adc12_pins(void);
@@ -548,7 +548,7 @@ void board_init_adc16_pins(void);
 void board_init_usb_pins(void);
 void board_usb_vbus_ctrl(uint8_t usb_index, uint8_t level);
 
-uint8_t    board_enet_get_dma_pbl(ENET_Type *ptr);
+uint8_t    board_get_enet_dma_pbl(ENET_Type *ptr);
 hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
 hpm_stat_t board_reset_enet_phy(ENET_Type *ptr);
 hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
