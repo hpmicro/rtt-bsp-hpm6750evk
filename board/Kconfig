@@ -165,16 +165,15 @@ menu "On-chip Peripheral Drivers"
 
        select RT_USING_ETH
        if BSP_USING_ETH
-            choice
-        prompt "ETH"
-            config BSP_USING_ETH0
-            bool "Enable ETH0"
-            select BSP_USING_ENET_PHY_DP83867
+               config BSP_USING_ETH0
+               bool "Enable ETH0"
+               default y
+               select BSP_USING_ENET_PHY_DP83867
 
-            config BSP_USING_ETH1
-            bool "Enable ETH1"
-            select BSP_USING_ENET_PHY_DP83848
-        endchoice
+               config BSP_USING_ETH1
+               bool "Enable ETH1"
+               default n
+               select BSP_USING_ENET_PHY_DP83848
        endif
 
     menuconfig BSP_USING_SDXC
@@ -207,6 +206,11 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
+        if BSP_USING_LCD
+            config BSP_USING_LCD_ISR
+                bool "Enable LCD interrupt"
+                default n
+        endif
 
     menuconfig BSP_USING_LVGL
         bool "Enable LVGL"
@@ -310,6 +314,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_USB_HOST
                 bool "Enable USB Host"
+                select RT_USING_CACHE
                 default n
        endif
 
@@ -415,9 +420,44 @@ menu "On-chip Peripheral Drivers"
                     default y
             endif
 
+        menuconfig BSP_USING_RTT_LCD_DRIVER
+            bool "Enable RTT LCD Driver"
+            select BSP_USING_LCD
+            default n
+
 
 endmenu
 
+menu "Segger SystemView Config"
+    config BSP_USING_SYSTEMVIEW
+        select RT_USING_SYSTEMVIEW
+        select RT_USING_LEGACY
+        bool "Enable Segger SystemView"
+        default n
 
+    if BSP_USING_SYSTEMVIEW
+        menuconfig BSP_SYSTEMVIEW_RTT_SECTION
+            bool "enable SystemView RTT section"
+            default y
+            if BSP_SYSTEMVIEW_RTT_SECTION
+                config SEGGER_RTT_SECTION
+                    string "segger rtt section"
+                    default ".noncacheable.bss"
+                config SEGGER_RTT_BUFFER_SECTION
+                    string "segger rtt buffer section"
+                    default ".noncacheable.bss"
+                config SEGGER_SYSVIEW_SECTION
+                    string "segger sysview section"
+                    default ".noncacheable.bss"
+            endif
+        source "$RTT_DIR/../libraries/misc/systemview/Kconfig"
+    endif
+endmenu
+
+menu "Hpmicro Interrupt Config"
+    config HPM_USING_VECTOR_PREEMPTED_MODE
+        bool "Enable Vector and Preempted Mode"
+        default n
+endmenu
 
 endmenu

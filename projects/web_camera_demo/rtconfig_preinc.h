@@ -13,5 +13,6 @@
 #define _POSIX_C_SOURCE 1
 #define _REENT_SMALL
 #define __RTTHREAD__
+#define __USE_DP83867 1
 
 #endif /*RTCONFIG_PREINC_H__*/

@@ -193,13 +193,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
@@ -276,5 +281,10 @@
 #define BSP_USING_I2C0
 #define BSP_USING_FEMC
 #define INIT_EXT_RAM_FOR_DATA
+#define BSP_USING_PANEL
+#define BSP_USEING_PANEL_RGB_TM070RDH13
+
+/* Segger SystemView Config */
+
 
 #endif

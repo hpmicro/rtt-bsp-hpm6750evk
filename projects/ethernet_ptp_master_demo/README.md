@@ -4,7 +4,8 @@
 
 本示例展示PTP Master的功能
 
-- Master与Slave通过PTP协议通讯，从而实现Slave端的时钟同步
+- Master与Slave通过PTP协议通讯，从而实现Slave端的时钟同步注：
+- 此示例仅支持单网口
 
 ## 硬件设置
 
