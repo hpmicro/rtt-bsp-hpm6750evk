@@ -33,13 +33,19 @@ uint8_t data_buff[BUFF_SIZE];
 #define CODEC_I2S_INSTANCE        BOARD_APP_I2S_BASE
 #define CODEC_I2S_CLK_NAME        BOARD_APP_I2S_CLK_NAME
 #define CODEC_I2C_DEV_NAME        BOARD_AUDIO_CODEC_I2C_NAME
-#define CODEC_I2S_DATA_LINE       BOARD_APP_I2S_DATA_LINE
+#define CODEC_I2S_RX_DATA_LINE    BOARD_APP_I2S_RX_DATA_LINE
+#define CODEC_I2S_TX_DATA_LINE    BOARD_APP_I2S_TX_DATA_LINE
 
 /* record wav parameter */
 #define CODEC_I2S_CHANNEL         i2s_stereo
 #define CODEC_I2S_SAMPLERATE      16000
 #define CODEC_I2S_SAMPLEBITS      16
 #define RECORD_TIME_MS            10000
+
+extern int open(const char *path, int oflag, ... );
+extern int write(int fd, const void *buf, size_t len);
+extern int read(int fd, void *buf, size_t len);
+extern int close(int fd);
 
 static void wavheader_init(wav_header_t *header, uint32_t sample_rate, uint8_t channels, uint8_t sample_bits, uint32_t datasize)
 {
@@ -77,7 +83,7 @@ static int codec_recordwav(int argc, char *argv[])
         return -RT_ERROR;
     }
 
-    fd = open(argv[1], O_WRONLY | O_CREAT);
+    fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC);
     if (fd < 0)
     {
         rt_kprintf("open file failed!\n");
@@ -122,7 +128,7 @@ static int codec_recordwav(int argc, char *argv[])
     // configure I2S channel
     i2s_caps.main_type               = AUDIO_TYPE_INPUT;
     i2s_caps.sub_type                = AUDIO_PARM_I2S_DATA_LINE;
-    i2s_caps.udata.value             = CODEC_I2S_DATA_LINE;
+    i2s_caps.udata.value             = CODEC_I2S_RX_DATA_LINE;
     rt_device_control(i2s_dev, AUDIO_CTL_CONFIGURE, &i2s_caps);
 
 #ifdef BSP_USING_AUDIO_CODEC_WM8960
@@ -287,7 +293,7 @@ static int codec_playwav(int argc, char *argv[])
 
     i2s_caps.main_type               = AUDIO_TYPE_OUTPUT;
     i2s_caps.sub_type                = AUDIO_PARM_I2S_DATA_LINE;
-    i2s_caps.udata.value             = CODEC_I2S_DATA_LINE;
+    i2s_caps.udata.value             = CODEC_I2S_TX_DATA_LINE;
     rt_device_control(i2s_dev, AUDIO_CTL_CONFIGURE, &i2s_caps);
 
 #ifdef BSP_USING_AUDIO_CODEC_WM8960

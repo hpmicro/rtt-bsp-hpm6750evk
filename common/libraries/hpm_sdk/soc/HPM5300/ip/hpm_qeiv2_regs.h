@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -84,7 +84,7 @@ typedef struct {
     __W  uint32_t PHASE_UPDATE;                /* 0x284: phase_update */
     __RW uint32_t POSITION;                    /* 0x288: position */
     __W  uint32_t POSITION_UPDATE;             /* 0x28C: position_update */
-    __R  uint32_t ANGLE;                       /* 0x290:  */
+    __R  uint32_t ANGLE;                       /* 0x290: angle */
     __RW uint32_t POS_TIMEOUT;                 /* 0x294: pos_timeout */
 } QEIV2_Type;
 
@@ -124,7 +124,7 @@ typedef struct {
 /*
  * Z_ONLY_EN (RW)
  *
- * 1- phcnt will set to phidx when Z input assert(for xy analog signal and digital z, also need set phcaliz)
+ * 1- phcnt will set to phidx when Z input assert(only using z phase, ignore ab phase signals)
  */
 #define QEIV2_CR_Z_ONLY_EN_MASK (0x100000UL)
 #define QEIV2_CR_Z_ONLY_EN_SHIFT (20U)

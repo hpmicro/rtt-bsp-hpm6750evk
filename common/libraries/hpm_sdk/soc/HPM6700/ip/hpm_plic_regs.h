@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -14,24 +14,22 @@ typedef struct {
     __RW uint32_t PRIORITY[127];               /* 0x4 - 0x1FC: Source priority */
     __R  uint8_t  RESERVED0[3584];             /* 0x200 - 0xFFF: Reserved */
     __RW uint32_t PENDING[4];                  /* 0x1000 - 0x100C: Pending status */
-    __R  uint8_t  RESERVED1[112];              /* 0x1010 - 0x107F: Reserved */
-    __R  uint32_t TRIGGER[4];                  /* 0x1080 - 0x108C: Trigger type */
-    __R  uint8_t  RESERVED2[112];              /* 0x1090 - 0x10FF: Reserved */
+    __R  uint8_t  RESERVED1[240];              /* 0x1010 - 0x10FF: Reserved */
     __R  uint32_t NUMBER;                      /* 0x1100: Number of supported interrupt sources and targets */
     __R  uint32_t INFO;                        /* 0x1104: Version and the maximum priority */
-    __R  uint8_t  RESERVED3[3832];             /* 0x1108 - 0x1FFF: Reserved */
+    __R  uint8_t  RESERVED2[3832];             /* 0x1108 - 0x1FFF: Reserved */
     struct {
-        __RW uint32_t INTEN[4];                /* 0x2000 - 0x200C: machine interrupt enable */
-        __R  uint8_t  RESERVED0[112];          /* 0x2010 - 0x207F: Reserved */
-    } TARGETINT[2];
-    __R  uint8_t  RESERVED4[2088704];          /* 0x2100 - 0x1FFFFF: Reserved */
+        __RW uint32_t INTEN[6];                /* 0x2000 - 0x2014: machine interrupt enable */
+        __R  uint8_t  RESERVED0[104];          /* 0x2018 - 0x207F: Reserved */
+    } TARGETINT[1];
+    __R  uint8_t  RESERVED3[2088832];          /* 0x2080 - 0x1FFFFF: Reserved */
     struct {
         __RW uint32_t THRESHOLD;               /* 0x200000: Target0 priority threshold */
         __RW uint32_t CLAIM;                   /* 0x200004: Target claim and complete */
         __R  uint8_t  RESERVED0[1016];         /* 0x200008 - 0x2003FF: Reserved */
         __RW uint32_t PPS;                     /* 0x200400: Preempted priority stack */
         __R  uint8_t  RESERVED1[3068];         /* 0x200404 - 0x200FFF: Reserved */
-    } TARGETCONFIG[2];
+    } TARGETCONFIG[1];
 } PLIC_Type;
 
 
@@ -83,18 +81,6 @@ typedef struct {
 #define PLIC_PENDING_INTERRUPT_SHIFT (0U)
 #define PLIC_PENDING_INTERRUPT_SET(x) (((uint32_t)(x) << PLIC_PENDING_INTERRUPT_SHIFT) & PLIC_PENDING_INTERRUPT_MASK)
 #define PLIC_PENDING_INTERRUPT_GET(x) (((uint32_t)(x) & PLIC_PENDING_INTERRUPT_MASK) >> PLIC_PENDING_INTERRUPT_SHIFT)
-
-/* Bitfield definition for register array: TRIGGER */
-/*
- * INTERRUPT (RO)
- *
- * The interrupt trigger type of interrupt sources. Every interrupt source occupies 1 bit.
- * 0: Level-triggered interrupt
- * 1: Edge-triggered interrupt
- */
-#define PLIC_TRIGGER_INTERRUPT_MASK (0xFFFFFFFFUL)
-#define PLIC_TRIGGER_INTERRUPT_SHIFT (0U)
-#define PLIC_TRIGGER_INTERRUPT_GET(x) (((uint32_t)(x) & PLIC_TRIGGER_INTERRUPT_MASK) >> PLIC_TRIGGER_INTERRUPT_SHIFT)
 
 /* Bitfield definition for register: NUMBER */
 /*
@@ -315,25 +301,19 @@ typedef struct {
 #define PLIC_PENDING_PENDING2 (2UL)
 #define PLIC_PENDING_PENDING3 (3UL)
 
-/* TRIGGER register group index macro definition */
-#define PLIC_TRIGGER_TRIGGER0 (0UL)
-#define PLIC_TRIGGER_TRIGGER1 (1UL)
-#define PLIC_TRIGGER_TRIGGER2 (2UL)
-#define PLIC_TRIGGER_TRIGGER3 (3UL)
-
 /* INTEN register group index macro definition */
 #define PLIC_TARGETINT_INTEN_INTEN0 (0UL)
 #define PLIC_TARGETINT_INTEN_INTEN1 (1UL)
 #define PLIC_TARGETINT_INTEN_INTEN2 (2UL)
 #define PLIC_TARGETINT_INTEN_INTEN3 (3UL)
+#define PLIC_TARGETINT_INTEN_INTEN4 (4UL)
+#define PLIC_TARGETINT_INTEN_INTEN5 (5UL)
 
 /* TARGETINT register group index macro definition */
 #define PLIC_TARGETINT_TARGET0 (0UL)
-#define PLIC_TARGETINT_TARGET1 (1UL)
 
 /* TARGETCONFIG register group index macro definition */
 #define PLIC_TARGETCONFIG_TARGET0 (0UL)
-#define PLIC_TARGETCONFIG_TARGET1 (1UL)
 
 
 #endif /* HPM_PLIC_H */

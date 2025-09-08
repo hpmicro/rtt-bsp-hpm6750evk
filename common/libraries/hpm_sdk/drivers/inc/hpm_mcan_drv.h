@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 HPMicro
+ * Copyright (c) 2023-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -72,7 +72,7 @@ enum {
 #define MCAN_INT_TX_COMPLETED               MCAN_IR_TC_MASK     /*!< Transmission Completed */
 #define MCAN_INT_HIGH_PRIORITY_MSG          MCAN_IR_HPM_MASK    /*!< High Priority Message */
 
-#define MCAN_INT_RXFIFO1_MSG_LOST           MCAN_IR_RF1L_MASK   /*!< RX FIFO0 Message Lost */
+#define MCAN_INT_RXFIFO1_MSG_LOST           MCAN_IR_RF1L_MASK   /*!< RX FIFO1 Message Lost */
 #define MCAN_INT_RXFIFO1_FULL               MCAN_IR_RF1F_MASK   /*!< RX FIFO1 Full */
 #define MCAN_INT_RXFIFO1_WMK_REACHED        MCAN_IR_RF1W_MASK   /*!< RX FIFO1 Watermark Reached */
 #define MCAN_INT_RXFIFO1_NEW_MSG            MCAN_IR_RF1N_MASK   /*!< RX FIFO1 New Message */
@@ -253,7 +253,7 @@ typedef struct mcan_rx_message_struct {
         uint16_t dlc: 4;                            /*!< Data Length Code */
         uint16_t bitrate_switch: 1;                 /*!< Bit rate switch flag */
         uint16_t canfd_frame: 1;                    /*!< CANFD Frame flag */
-        uint16_t : 1;
+        uint16_t : 2;
         uint16_t filter_index: 7;                   /*!< CAN filter index */
         uint16_t accepted_non_matching_frame: 1;    /*!< Accept non-matching Frame flag */
     };
@@ -1359,6 +1359,17 @@ static inline void mcan_send_add_multiple_requests(MCAN_Type *ptr, uint32_t inde
 static inline void mcan_cancel_tx_buf_send_request(MCAN_Type *ptr, uint32_t index)
 {
     ptr->TXBCR = (1UL << index);
+}
+
+/**
+ * @brief Check whether TXBUF cancellation was finished
+ * @param [in] ptr MCAN Base
+ * @param [in] index TXBUF index
+ * @return true if cancellation finished
+ */
+static inline bool mcan_is_tx_buf_cancellation_finished(MCAN_Type *ptr, uint32_t index)
+{
+    return ((ptr->TXBCF & ((1UL << index))) != 0U);
 }
 
 /**

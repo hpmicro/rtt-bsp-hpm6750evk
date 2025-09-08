@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 HPMicro
+ * Copyright (c) 2023,2025 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -10,19 +10,20 @@ HEAP_SIZE = _heap_size;
 
 MEMORY
 {
-    XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = _flash_size
+    FLASH (rx) : ORIGIN = 0x80000000, LENGTH = _flash_size
     ILM (wx) : ORIGIN = 0x00000000, LENGTH = 256K
     DLM (w) : ORIGIN = 0x00080000, LENGTH = 256K
     AXI_SRAM (wx) : ORIGIN = 0x1200000, LENGTH = 512K
-    SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = (_extram_size - 32M)
-    SDRAM_NONCACHEABLE (wx) : ORIGIN = 0x40000000 + (_extram_size - 32M), LENGTH = 32M
+    SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = (_extram_size - 64M)
+    SDRAM_NONCACHEABLE (wx) : ORIGIN = 0x40000000 + (_extram_size - 64M), LENGTH = 32M
+    SDRAM_GPU (wx) : ORIGIN = 0x40000000 + (_extram_size - 32M), LENGTH = 32M
     AHB_SRAM (w) : ORIGIN = 0xF0400000, LENGTH = 32k
     APB_SRAM (w): ORIGIN = 0xF4130000, LENGTH = 16k
 }
 
-__nor_cfg_option_load_addr__ = ORIGIN(XPI0) + 0x400;
-__boot_header_load_addr__ = ORIGIN(XPI0) + 0x1000;
-__app_load_addr__ = ORIGIN(XPI0) + 0x3000;
+__nor_cfg_option_load_addr__ = ORIGIN(FLASH) + 0x400;
+__boot_header_load_addr__ = ORIGIN(FLASH) + 0x1000;
+__app_load_addr__ = ORIGIN(FLASH) + 0x3000;
 __boot_header_length__ = __boot_header_end__ - __boot_header_start__;
 __app_offset__ = __app_load_addr__ - __boot_header_load_addr__;
 
@@ -30,7 +31,7 @@ SECTIONS
 {
     .nor_cfg_option __nor_cfg_option_load_addr__ : {
         KEEP(*(.nor_cfg_option))
-    } > XPI0
+    } > FLASH
 
     .boot_header __boot_header_load_addr__ : {
         __boot_header_start__ = .;
@@ -38,12 +39,13 @@ SECTIONS
         KEEP(*(.fw_info_table))
         KEEP(*(.dc_info))
         __boot_header_end__ = .;
-    } > XPI0
+    } > FLASH
 
     .start __app_load_addr__ : {
         . = ALIGN(8);
         KEEP(*(.start))
-    } > XPI0
+        . = ALIGN(8);
+    } > FLASH
 
     __vector_load_addr__ = ADDR(.start) + SIZEOF(.start);
     .vectors ORIGIN(ILM) : AT(__vector_load_addr__) {
@@ -51,18 +53,19 @@ SECTIONS
         __vector_ram_start__ = .;
         KEEP(*(.vector_table))
         KEEP(*(.isr_vector))
+        KEEP(*(.isr_vector.*))
         . = ALIGN(8);
         __vector_ram_end__ = .;
     } > ILM
 
     .text (__vector_load_addr__ + SIZEOF(.vectors)) : {
         . = ALIGN(8);
-        *(.text)
-        *(.text*)
-        *(.rodata)
-        *(.rodata*)
-        *(.srodata)
-        *(.srodata*)
+        *(EXCLUDE_FILE (nx*.o*) .text)
+        *(EXCLUDE_FILE (nx*.o*) .text*)
+        *(EXCLUDE_FILE (nx*.o*) .rodata)
+        *(EXCLUDE_FILE (nx*.o*) .rodata*)
+        *(EXCLUDE_FILE (nx*.o*) .srodata)
+        *(EXCLUDE_FILE (nx*.o*) .srodata*)
 
         *(.hash)
         *(.dyn*)
@@ -104,26 +107,27 @@ SECTIONS
 
         /* RT-Thread related sections - end */
         . = ALIGN(8);
-    } > XPI0
+    } > FLASH
 
     .eh_frame :
     {
         __eh_frame_start = .;
         KEEP(*(.eh_frame))
         __eh_frame_end = .;
-    }  > XPI0
+    }  > FLASH
 
     .eh_frame_hdr :
     {
         KEEP(*(.eh_frame_hdr))
-    }  > XPI0
+    }  > FLASH
     __eh_frame_hdr_start = SIZEOF(.eh_frame_hdr) > 0 ? ADDR(.eh_frame_hdr) : 0;
     __eh_frame_hdr_end = SIZEOF(.eh_frame_hdr) > 0 ? . : 0;
 
     .rel : {
         KEEP(*(.rel*))
-    } > XPI0
+    } > FLASH
 
+    . = ALIGN(8);
     PROVIDE (__etext = .);
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
@@ -157,10 +161,10 @@ SECTIONS
         PROVIDE(__init_array_end = .);
 
         . = ALIGN(8);
-        PROVIDE(__finit_array_start = .);
-        KEEP(*(SORT_BY_INIT_PRIORITY(.finit_array.*)))
-        KEEP(*(.finit_array))
-        PROVIDE(__finit_array_end = .);
+        PROVIDE(__fini_array_start = .);
+        KEEP(*(SORT_BY_INIT_PRIORITY(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE(__fini_array_end = .);
 
         . = ALIGN(8);
         KEEP(*crtbegin*.o(.ctors))
@@ -187,6 +191,12 @@ SECTIONS
         PROVIDE(__ramfunc_start__ = .);
         *(.fast)
         *(.fast.*)
+        nx*.o*(.text)
+        nx*.o*(.text*)
+        nx*.o*(.rodata)
+        nx*.o*(.rodata*)
+        nx*.o*(.srodata)
+        nx*.o*(.srodata*)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
     } > ILM
@@ -219,6 +229,7 @@ SECTIONS
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
+        KEEP(*(.noncacheable.init.*))
         __noncacheable_init_end__ = .;
         . = ALIGN(8);
     } > SDRAM_NONCACHEABLE
@@ -228,6 +239,7 @@ SECTIONS
         . = ALIGN(8);
         __fast_ram_init_start__ = .;
         KEEP(*(.fast_ram.init))
+        KEEP(*(.fast_ram.init.*))
         __fast_ram_init_end__ = .;
         . = ALIGN(8);
     } > DLM
@@ -250,6 +262,7 @@ SECTIONS
     .framebuffer (NOLOAD) : {
         . = ALIGN(8);
         KEEP(*(.framebuffer))
+        KEEP(*(.framebuffer.*))
         . = ALIGN(8);
     } > SDRAM
 
@@ -260,28 +273,43 @@ SECTIONS
         __heap_end__ = .;
     } > SDRAM
 
-    .noncacheable.bss (NOLOAD) : {
+    .noncacheable (NOLOAD) : {
         . = ALIGN(8);
-        KEEP(*(.noncacheable))
+        KEEP(*(.noncacheable))  /* Legacy sections, kept for backwards compatibility */
+        KEEP(*(.noncacheable.non_init))
+        KEEP(*(.noncacheable.non_init.*))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
+        KEEP(*(.noncacheable.bss.*))
         __noncacheable_bss_end__ = .;
         . = ALIGN(8);
     } > SDRAM_NONCACHEABLE
 
+    .gpu (NOLOAD) : {
+        . = ALIGN(8);
+        KEEP(*(.gpu))
+        KEEP(*(.gpu.*))
+        . = ALIGN(8);
+    } > SDRAM_GPU
+
     .ahb_sram (NOLOAD) : {
         KEEP(*(.ahb_sram))
+        KEEP(*(.ahb_sram.*))
     } > AHB_SRAM
 
     .apb_sram (NOLOAD) : {
         KEEP(*(.backup_sram))
+        KEEP(*(.backup_sram.*))
     } > APB_SRAM
 
-    .fast_ram.bss (NOLOAD) : {
+    .fast_ram (NOLOAD) : {
         . = ALIGN(8);
-        KEEP(*(.fast_ram))
+        KEEP(*(.fast_ram))  /* Legacy sections, kept for backwards compatibility */
+        KEEP(*(.fast_ram.non_init))
+        KEEP(*(.fast_ram.non_init.*))
         __fast_ram_bss_start__ = .;
         KEEP(*(.fast_ram.bss))
+        KEEP(*(.fast_ram.bss.*))
         __fast_ram_bss_end__ = .;
         . = ALIGN(8);
     } > DLM
@@ -297,8 +325,10 @@ SECTIONS
 
     __noncacheable_start__ = ORIGIN(SDRAM_NONCACHEABLE);
     __noncacheable_end__ = ORIGIN(SDRAM_NONCACHEABLE) + LENGTH(SDRAM_NONCACHEABLE);
+    __gpu_start__ = ORIGIN(SDRAM_GPU);
+    __gpu_end__ = ORIGIN(SDRAM_GPU) + LENGTH(SDRAM_GPU);
 
-    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init);
+    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init) + SIZEOF(.eh_frame) + SIZEOF(.eh_frame_hdr);
     __last_addr__ = __fast_ram_init_load_addr__ + SIZEOF(.fast_ram.init);
-    ASSERT(((__fw_size__ <= LENGTH(XPI0)) && (__last_addr__ <= (ORIGIN(XPI0) + LENGTH(XPI0)))), "******  FAILED! XPI0 has not enough space!  ******")
+    ASSERT(((__fw_size__ <= LENGTH(FLASH)) && (__last_addr__ <= (ORIGIN(FLASH) + LENGTH(FLASH)))), "******  FAILED! FLASH does not have enough space!  ******")
 }

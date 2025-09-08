@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -4486,7 +4486,13 @@ ICMP payload */
  * - When PPSCTRL = 0011, the PPS (4 Hz) is a sequence of:
  *   - Three clocks of 50 percent duty cycle and 268 ms period
  *   - Fourth clock of 195 ms period (134 ms low and 61 ms high)
+ * --------------------------------------------------------------------------------------------------------------------------------------
  * PPSCMD0: Flexible PPS0 Output Control
+ * Programming these bits with a non-zero value instructs the MAC to
+ * initiate an event. When the command is transferred or synchronized to
+ * the PTP clock domain, these bits get cleared automatically. The
+ * Software should ensure that these bits are programmed only when they
+ * are “all-zero”.
  * 0000: No Command
  * 0001: START Single Pulse
  * This command generates single pulse rising at the start point defined in
@@ -4537,6 +4543,7 @@ ICMP payload */
  * AUXTSHI (RO)
  *
  * Contains the lower 32 bits of the Seconds field of the auxiliary timestamp.
+ * Note: The top of the FIFO is removed only when the last byte of AUX_TS_SEC is read.
  */
 #define ENET_AUX_TS_SEC_AUXTSHI_MASK (0xFFFFFFFFUL)
 #define ENET_AUX_TS_SEC_AUXTSHI_SHIFT (0U)
@@ -5174,9 +5181,7 @@ ICMP payload */
  * RI (RW)
  *
  * Receive Interrupt
- * This bit indicates that the frame reception is complete.
- * When reception is complete, the Bit 31 of RDES1 (Disable Interrupt on Completion) is reset in the last Descriptor,
- * and the specific frame status information is updated in the descriptor.
+ * This bit indicates that the frame reception is complete and the specific frame status information is updated in the descriptor.
  * The reception remains in the Running state.
  */
 #define ENET_DMA_STATUS_RI_MASK (0x40U)

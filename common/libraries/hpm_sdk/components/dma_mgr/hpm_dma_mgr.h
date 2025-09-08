@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 HPMicro
+ * Copyright (c) 2022-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -125,9 +125,9 @@ enum {
 /**
  * @brief DMA Channel Interrupt callback
  *
- * @param [in] DMA base address
+ * @param [in] base base address
  * @param [in] channel DMA channel index
- * @param [in/out] cb_data_ptr callback Data pointer
+ * @param [inout] cb_data_ptr callback Data pointer
  */
 typedef void (*dma_mgr_chn_cb_t)(DMA_Type *base, uint32_t channel, void *cb_data_ptr);
 
@@ -185,9 +185,20 @@ void dma_mgr_init(void);
  * @param [out] resource DMA resource
  * @retval status_success if no error occurred
  * @retval status_invalid_argument if the parameter is invalid
- * @retval status_dma_mgr_no_resource if all DMA channels are occupied;
+ * @retval status_dma_mgr_no_resource if all DMA channels are occupied
  */
 hpm_stat_t dma_mgr_request_resource(dma_resource_t *resource);
+
+/**
+ * @brief Request DMA resource from specified DMA
+ *
+ * @param [out] resource DMA resource
+ * @param [in] base specified DMA, such as HPM_HDMA, HPM_XDMA
+ * @retval status_success if no error occurred
+ * @retval status_invalid_argument if the parameter is invalid
+ * @retval status_dma_mgr_no_resource if all DMA channels are occupied
+ */
+hpm_stat_t dma_mgr_request_specified_resource(dma_resource_t *resource, DMA_Type *base);
 
 /**
  * @brief Release DMA resource
@@ -333,6 +344,7 @@ hpm_stat_t dma_mgr_check_chn_enable(const dma_resource_t *resource, bool *enable
 /**
  * @brief Enable DMA channel interrupt
  * @param [in] resource DMA resource
+ * @param [in] irq_mask irq mask, refer to DMA_MGR_INTERRUPT_MASK_xxxx
  *
  * @retval status_success if no error occurred
  * @retval status_invalid_argument if any parameters are invalid
@@ -342,7 +354,7 @@ hpm_stat_t dma_mgr_enable_chn_irq(const dma_resource_t *resource, uint32_t irq_m
 /**
  * @brief Disable DMA channel interrupt
  * @param [in] resource DMA resource
- *
+ * @param [in] irq_mask irq mask, refer to DMA_MGR_INTERRUPT_MASK_xxxx
  * @retval status_success if no error occurred
  * @retval status_invalid_argument if any parameters are invalid
  */
@@ -353,8 +365,8 @@ hpm_stat_t dma_mgr_disable_chn_irq(const dma_resource_t *resource, uint32_t irq_
  *
  * @param [in] resource DMA resource
  * @param [in] priority DMA channel priority
- *  @arg @ref DMA_MGR_PRIORITY_LOW
- *  @arg @ref DMA_MGR_PRIORITY_HIGH
+ *  @arg @ref DMA_MGR_CHANNEL_PRIORITY_LOW
+ *  @arg @ref DMA_MGR_CHANNEL_PRIORITY_HIGH
  *
  * @retval status_success if no error occurred
  * @retval status_invalid_argument if any parameters are invalid
@@ -564,7 +576,7 @@ hpm_stat_t dma_mgr_abort_chn_transfer(const dma_resource_t *resource);
  * @brief Check DMA channel transfer status
  *
  * @param [in] resource DMA resource
- * @param [out] sts transfer status
+ * @param [out] status transfer status
  *    DMA_MGR_CHANNEL_STATUS_ONGOING if transfer is still ongoing
  *    DMA_MGR_CHANNEL_STATUS_ERROR if any error occurred during transferring
  *    DMA_MGR_CHANNEL_STATUS_ABORT if transfer is aborted

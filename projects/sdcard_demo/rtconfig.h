@@ -255,6 +255,30 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -342,6 +366,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
+#define BSP_GPIO_IRQ_PRIORITY 1
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define BSP_UART0_RX_BUFSIZE 128
@@ -349,6 +374,7 @@
 #define BSP_USING_RTC
 #define BSP_USING_SDXC
 #define BSP_USING_SDXC1
+#define BSP_SDXC1_IRQ_PRIORITY 1
 #define BSP_SDXC1_BUS_WIDTH_4BIT
 #define BSP_SDXC1_VOLTAGE_3V3
 #define BSP_SDXC1_VSEL_PIN "None"
@@ -361,9 +387,9 @@
 
 /* end of Segger SystemView Config */
 
-/* Hpmicro Interrupt Config */
+/* HPMicro Interrupt Config */
 
-/* end of Hpmicro Interrupt Config */
+/* end of HPMicro Interrupt Config */
 /* end of Hardware Drivers Config */
 
 #endif

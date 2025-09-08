@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -27,6 +27,12 @@
 
 /* mchtimer section */
 #define BOARD_MCHTMR_FREQ_IN_HZ (24000000UL)
+
+/* gptmr as os_tick */
+#define BOARD_OS_TIMER HPM_GPTMR0
+#define BOARD_OS_TIMER_CH       1
+#define BOARD_OS_TIMER_IRQ      IRQn_GPTMR0
+#define BOARD_OS_TIMER_CLK_NAME (clock_gptmr0)
 
 /* SPI WIFI section */
 #define RW007_RST_PIN                         (IOC_PAD_PE02)

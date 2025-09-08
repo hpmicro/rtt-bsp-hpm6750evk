@@ -23,6 +23,7 @@
 #include "hpm_pllctl_drv.h"
 #include "hpm_enet_drv.h"
 #include "hpm_pcfg_drv.h"
+#include <rtconfig.h>
 
 static board_timer_cb timer_cb;
 static bool invert_led_level;

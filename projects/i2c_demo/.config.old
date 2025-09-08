@@ -342,6 +342,7 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # CONFIG_PKG_USING_RAPIDJSON is not set
 # CONFIG_PKG_USING_JSMN is not set
 # CONFIG_PKG_USING_AGILE_JSMN is not set
+# CONFIG_PKG_USING_PARSON is not set
 # end of JSON: JavaScript Object Notation, a lightweight data-interchange format
 
 #
@@ -401,7 +402,6 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # end of PainterEngine: A cross-platform graphics application framework written in C language
 
 # CONFIG_PKG_USING_MCURSES is not set
-# CONFIG_PKG_USING_TERMBOX is not set
 # CONFIG_PKG_USING_VT100 is not set
 # CONFIG_PKG_USING_QRCODE is not set
 # CONFIG_PKG_USING_GUIENGINE is not set
@@ -468,16 +468,6 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # end of enhanced kernel services
 
 #
-# POSIX extension functions
-#
-# CONFIG_PKG_USING_POSIX_GETLINE is not set
-# CONFIG_PKG_USING_POSIX_WCWIDTH is not set
-# CONFIG_PKG_USING_POSIX_ITOA is not set
-# CONFIG_PKG_USING_POSIX_STRINGS is not set
-# CONFIG_PKG_USING_POSIX_CTYPES is not set
-# end of POSIX extension functions
-
-#
 # acceleration: Assembly language or algorithmic acceleration packages
 #
 # CONFIG_PKG_USING_QFPLIB_M0_FULL is not set
@@ -504,7 +494,6 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # CONFIG_PKG_USING_UC_MODBUS is not set
 # end of Micrium: Micrium software products porting for RT-Thread
 
-# CONFIG_PKG_USING_RTDUINO is not set
 # CONFIG_PKG_USING_CAIRO is not set
 # CONFIG_PKG_USING_PIXMAN is not set
 # CONFIG_PKG_USING_PARTITION is not set
@@ -548,8 +537,10 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # CONFIG_PKG_USING_REALTEK_AMEBA is not set
 # CONFIG_PKG_USING_SHT2X is not set
 # CONFIG_PKG_USING_SHT3X is not set
+# CONFIG_PKG_USING_ADT74XX is not set
 # CONFIG_PKG_USING_AS7341 is not set
 # CONFIG_PKG_USING_STM32_SDIO is not set
+# CONFIG_PKG_USING_RTT_ESP_IDF is not set
 # CONFIG_PKG_USING_ICM20608 is not set
 # CONFIG_PKG_USING_BUTTON is not set
 # CONFIG_PKG_USING_PCF8574 is not set
@@ -690,7 +681,6 @@ CONFIG_RT_LIBC_DEFAULT_TIMEZONE=8
 # CONFIG_PKG_USING_UPARAM is not set
 # CONFIG_PKG_USING_HELLO is not set
 # CONFIG_PKG_USING_VI is not set
-# CONFIG_PKG_USING_KI is not set
 # CONFIG_PKG_USING_ARMv7M_DWT is not set
 # CONFIG_PKG_USING_UKAL is not set
 # CONFIG_PKG_USING_CRCLIB is not set

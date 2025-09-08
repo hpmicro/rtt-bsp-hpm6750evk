@@ -15,11 +15,23 @@ config BSP_USING_ENET_PHY_DP83848
     bool
     default n
 
+if BSP_USING_ETH
+    config LWIP_SUPPORT_CUSTOM_PBUF
+    int
+    default 1
+endif
+
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN if BSP_USING_GPIO
         default n
+        if BSP_USING_GPIO
+            config BSP_GPIO_IRQ_PRIORITY
+            int "GPIO Interrupt Priority"
+            range 1 7
+            default 1
+        endif
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -182,12 +194,15 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_RTC
        bool "Enable RTC"
        default n
+       select RT_USING_RTC if BSP_USING_RTC
 
     menuconfig BSP_USING_ETH
        bool "Enable Ethernet"
        default n
 
-       select RT_USING_ETH
+       select RT_USING_ETH if BSP_USING_ETH
+       select RT_USING_PHY if BSP_USING_ETH
+
        if BSP_USING_ETH
                config BSP_USING_ETH0
                bool "Enable ETH0"
@@ -204,11 +219,22 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDXC"
         default n
         select RT_USING_SDIO if BSP_USING_SDXC
+        select RT_USING_PIN if BSP_USING_SDXC
         if BSP_USING_SDXC
             config BSP_USING_SDXC0
                 bool "Enable SDXC0"
                 default n
             if BSP_USING_SDXC0
+                config BSP_SDXC0_ENABLE_INTERRUPT_DRIVEN
+                        bool "Enable Interrupt-driven mode"
+                        default n
+                    config BSP_SDXC0_REQUIRE_CACHELINE_ALIGNED_BUF
+                        bool "Always require cache-line aligned buffer"
+                        default n
+                    config BSP_SDXC0_IRQ_PRIORITY
+                        int "SDXC Interrupt Priority"
+                        range 1 7
+                        default 1
                 choice
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC0_BUS_WIDTH_8BIT
@@ -241,6 +267,16 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDXC1"
                 default n
             if BSP_USING_SDXC1
+                config BSP_SDXC1_ENABLE_INTERRUPT_DRIVEN
+                        bool "Enable Interrupt-driven mode"
+                        default n
+                    config BSP_SDXC1_REQUIRE_CACHELINE_ALIGNED_BUF
+                        bool "Always require cache-line aligned buffer"
+                        default n
+                    config BSP_SDXC1_IRQ_PRIORITY
+                        int "SDXC Interrupt Priority"
+                        range 1 7
+                        default 1
                 choice
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC1_BUS_WIDTH_4BIT
@@ -532,9 +568,9 @@ menu "Segger SystemView Config"
     endif
 endmenu
 
-menu "Hpmicro Interrupt Config"
+menu "HPMicro Interrupt Config"
     config HPM_USING_VECTOR_PREEMPTED_MODE
-        bool "Enable Vector and Preempted Mode"
+        bool "Enable Vector and Preempted Mode(experimental)"
         default n
 endmenu
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,8 +11,8 @@
 
 typedef struct {
     __RW uint32_t FEATURE;                     /* 0x0: Feature enable register */
-    __RW uint32_t PRIORITY[127];               /* 0x4 - 0x1FC: Source priority */
-    __R  uint8_t  RESERVED0[3584];             /* 0x200 - 0xFFF: Reserved */
+    __RW uint32_t PRIORITY[72];                /* 0x4 - 0x120: Source priority */
+    __R  uint8_t  RESERVED0[3804];             /* 0x124 - 0xFFF: Reserved */
     __RW uint32_t PENDING[4];                  /* 0x1000 - 0x100C: Pending status */
     __R  uint8_t  RESERVED1[112];              /* 0x1010 - 0x107F: Reserved */
     __R  uint32_t TRIGGER[4];                  /* 0x1080 - 0x108C: Trigger type */
@@ -21,8 +21,8 @@ typedef struct {
     __R  uint32_t INFO;                        /* 0x1104: Version and the maximum priority */
     __R  uint8_t  RESERVED3[3832];             /* 0x1108 - 0x1FFF: Reserved */
     struct {
-        __RW uint32_t INTEN[4];                /* 0x2000 - 0x200C: machine interrupt enable */
-        __R  uint8_t  RESERVED0[112];          /* 0x2010 - 0x207F: Reserved */
+        __RW uint32_t INTEN[6];                /* 0x2000 - 0x2014: machine interrupt enable */
+        __R  uint8_t  RESERVED0[104];          /* 0x2018 - 0x207F: Reserved */
     } TARGETINT[1];
     __R  uint8_t  RESERVED4[2088832];          /* 0x2080 - 0x1FFFFF: Reserved */
     struct {
@@ -64,9 +64,9 @@ typedef struct {
 /*
  * PRIORITY (RW)
  *
- * Interrupt source priority. The valid range of this field is 0-7.
+ * Interrupt source priority. The valid range of this field is 0-31.
  * 0: Never interrupt
- * 1-7: Interrupt source priority. The larger the value, the higher the priority.
+ * 1-31: Interrupt source priority. The larger the value, the higher the priority.
  */
 #define PLIC_PRIORITY_PRIORITY_MASK (0xFFFFFFFFUL)
 #define PLIC_PRIORITY_PRIORITY_SHIFT (0U)
@@ -253,61 +253,6 @@ typedef struct {
 #define PLIC_PRIORITY_PRIORITY70 (69UL)
 #define PLIC_PRIORITY_PRIORITY71 (70UL)
 #define PLIC_PRIORITY_PRIORITY72 (71UL)
-#define PLIC_PRIORITY_PRIORITY73 (72UL)
-#define PLIC_PRIORITY_PRIORITY74 (73UL)
-#define PLIC_PRIORITY_PRIORITY75 (74UL)
-#define PLIC_PRIORITY_PRIORITY76 (75UL)
-#define PLIC_PRIORITY_PRIORITY77 (76UL)
-#define PLIC_PRIORITY_PRIORITY78 (77UL)
-#define PLIC_PRIORITY_PRIORITY79 (78UL)
-#define PLIC_PRIORITY_PRIORITY80 (79UL)
-#define PLIC_PRIORITY_PRIORITY81 (80UL)
-#define PLIC_PRIORITY_PRIORITY82 (81UL)
-#define PLIC_PRIORITY_PRIORITY83 (82UL)
-#define PLIC_PRIORITY_PRIORITY84 (83UL)
-#define PLIC_PRIORITY_PRIORITY85 (84UL)
-#define PLIC_PRIORITY_PRIORITY86 (85UL)
-#define PLIC_PRIORITY_PRIORITY87 (86UL)
-#define PLIC_PRIORITY_PRIORITY88 (87UL)
-#define PLIC_PRIORITY_PRIORITY89 (88UL)
-#define PLIC_PRIORITY_PRIORITY90 (89UL)
-#define PLIC_PRIORITY_PRIORITY91 (90UL)
-#define PLIC_PRIORITY_PRIORITY92 (91UL)
-#define PLIC_PRIORITY_PRIORITY93 (92UL)
-#define PLIC_PRIORITY_PRIORITY94 (93UL)
-#define PLIC_PRIORITY_PRIORITY95 (94UL)
-#define PLIC_PRIORITY_PRIORITY96 (95UL)
-#define PLIC_PRIORITY_PRIORITY97 (96UL)
-#define PLIC_PRIORITY_PRIORITY98 (97UL)
-#define PLIC_PRIORITY_PRIORITY99 (98UL)
-#define PLIC_PRIORITY_PRIORITY100 (99UL)
-#define PLIC_PRIORITY_PRIORITY101 (100UL)
-#define PLIC_PRIORITY_PRIORITY102 (101UL)
-#define PLIC_PRIORITY_PRIORITY103 (102UL)
-#define PLIC_PRIORITY_PRIORITY104 (103UL)
-#define PLIC_PRIORITY_PRIORITY105 (104UL)
-#define PLIC_PRIORITY_PRIORITY106 (105UL)
-#define PLIC_PRIORITY_PRIORITY107 (106UL)
-#define PLIC_PRIORITY_PRIORITY108 (107UL)
-#define PLIC_PRIORITY_PRIORITY109 (108UL)
-#define PLIC_PRIORITY_PRIORITY110 (109UL)
-#define PLIC_PRIORITY_PRIORITY111 (110UL)
-#define PLIC_PRIORITY_PRIORITY112 (111UL)
-#define PLIC_PRIORITY_PRIORITY113 (112UL)
-#define PLIC_PRIORITY_PRIORITY114 (113UL)
-#define PLIC_PRIORITY_PRIORITY115 (114UL)
-#define PLIC_PRIORITY_PRIORITY116 (115UL)
-#define PLIC_PRIORITY_PRIORITY117 (116UL)
-#define PLIC_PRIORITY_PRIORITY118 (117UL)
-#define PLIC_PRIORITY_PRIORITY119 (118UL)
-#define PLIC_PRIORITY_PRIORITY120 (119UL)
-#define PLIC_PRIORITY_PRIORITY121 (120UL)
-#define PLIC_PRIORITY_PRIORITY122 (121UL)
-#define PLIC_PRIORITY_PRIORITY123 (122UL)
-#define PLIC_PRIORITY_PRIORITY124 (123UL)
-#define PLIC_PRIORITY_PRIORITY125 (124UL)
-#define PLIC_PRIORITY_PRIORITY126 (125UL)
-#define PLIC_PRIORITY_PRIORITY127 (126UL)
 
 /* PENDING register group index macro definition */
 #define PLIC_PENDING_PENDING0 (0UL)
@@ -326,6 +271,8 @@ typedef struct {
 #define PLIC_TARGETINT_INTEN_INTEN1 (1UL)
 #define PLIC_TARGETINT_INTEN_INTEN2 (2UL)
 #define PLIC_TARGETINT_INTEN_INTEN3 (3UL)
+#define PLIC_TARGETINT_INTEN_INTEN4 (4UL)
+#define PLIC_TARGETINT_INTEN_INTEN5 (5UL)
 
 /* TARGETINT register group index macro definition */
 #define PLIC_TARGETINT_TARGET0 (0UL)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 HPMicro
+ * Copyright (c) 2023,2025 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -11,9 +11,9 @@ UF2_BOOTLOADER_RESERVED_LENGTH = DEFINED(_uf2_bl_length) ? _uf2_bl_length : 0x20
 
 MEMORY
 {
-    XPI0 (rx) : ORIGIN = 0x80000000 + UF2_BOOTLOADER_RESERVED_LENGTH, LENGTH = _flash_size - UF2_BOOTLOADER_RESERVED_LENGTH
+    FLASH (rx) : ORIGIN = 0x80000000 + UF2_BOOTLOADER_RESERVED_LENGTH, LENGTH = _flash_size - UF2_BOOTLOADER_RESERVED_LENGTH
     ILM (wx) : ORIGIN = 0x00000000, LENGTH = 128K
-    DLM (w) : ORIGIN = 0x00080000, LENGTH = 128K
+    DLM (w) : ORIGIN = 0x00080300, LENGTH = 128K - 768
     AHB_SRAM (w) : ORIGIN = 0xF0400000, LENGTH = 32k
 }
 
@@ -22,7 +22,8 @@ SECTIONS
     .start : {
         KEEP(*(.uf2_signature))
         KEEP(*(.start))
-    } > XPI0
+        . = ALIGN(8);
+    } > FLASH
 
     __vector_load_addr__ = ADDR(.start) + SIZEOF(.start);
     .vectors ORIGIN(ILM) : AT(__vector_load_addr__) {
@@ -30,8 +31,10 @@ SECTIONS
         __vector_ram_start__ = .;
         KEEP(*(.vector_table))
         KEEP(*(.isr_vector))
+        KEEP(*(.isr_vector.*))
         KEEP(*(.vector_s_table))
         KEEP(*(.isr_s_vector))
+        KEEP(*(.isr_s_vector.*))
         . = ALIGN(8);
         __vector_ram_end__ = .;
     } > ILM
@@ -85,27 +88,28 @@ SECTIONS
 
         /* RT-Thread related sections - end */
         . = ALIGN(8);
-    } > XPI0
+    } > FLASH
 
     .eh_frame :
     {
         __eh_frame_start = .;
         KEEP(*(.eh_frame))
         __eh_frame_end = .;
-    }  > XPI0
+    }  > FLASH
 
     .eh_frame_hdr :
     {
         KEEP(*(.eh_frame_hdr))
-    }  > XPI0
+    }  > FLASH
     __eh_frame_hdr_start = SIZEOF(.eh_frame_hdr) > 0 ? ADDR(.eh_frame_hdr) : 0;
     __eh_frame_hdr_end = SIZEOF(.eh_frame_hdr) > 0 ? . : 0;
 
 
     .rel : {
         KEEP(*(.rel*))
-    } > XPI0
+    } > FLASH
 
+    . = ALIGN(8);
     PROVIDE (__etext = .);
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
@@ -139,10 +143,10 @@ SECTIONS
         PROVIDE(__init_array_end = .);
 
         . = ALIGN(8);
-        PROVIDE(__finit_array_start = .);
-        KEEP(*(SORT_BY_INIT_PRIORITY(.finit_array.*)))
-        KEEP(*(.finit_array))
-        PROVIDE(__finit_array_end = .);
+        PROVIDE(__fini_array_start = .);
+        KEEP(*(SORT_BY_INIT_PRIORITY(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE(__fini_array_end = .);
 
         . = ALIGN(8);
         KEEP(*crtbegin*.o(.ctors))
@@ -200,6 +204,7 @@ SECTIONS
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
+        KEEP(*(.noncacheable.init.*))
         __noncacheable_init_end__ = .;
         . = ALIGN(8);
     } > DLM
@@ -209,12 +214,14 @@ SECTIONS
         . = ALIGN(8);
         __fast_ram_init_start__ = .;
         KEEP(*(.fast_ram.init))
+        KEEP(*(.fast_ram.init.*))
         __fast_ram_init_end__ = .;
         . = ALIGN(8);
     } > DLM
 
     .ahb_sram (NOLOAD) : {
         KEEP(*(.ahb_sram))
+        KEEP(*(.ahb_sram.*))
     } > AHB_SRAM
 
     .bss (NOLOAD) : {
@@ -235,24 +242,31 @@ SECTIONS
     .framebuffer (NOLOAD) : {
         . = ALIGN(8);
         KEEP(*(.framebuffer))
+        KEEP(*(.framebuffer.*))
         . = ALIGN(8);
     } > DLM
 
 
-    .noncacheable.bss (NOLOAD) : {
+    .noncacheable (NOLOAD) : {
         . = ALIGN(8);
-        KEEP(*(.noncacheable))
+        KEEP(*(.noncacheable))  /* Legacy sections, kept for backwards compatibility */
+        KEEP(*(.noncacheable.non_init))
+        KEEP(*(.noncacheable.non_init.*))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
+        KEEP(*(.noncacheable.bss.*))
         __noncacheable_bss_end__ = .;
         . = ALIGN(8);
     } > DLM
 
-    .fast_ram.bss (NOLOAD) : {
+    .fast_ram (NOLOAD) : {
         . = ALIGN(8);
-        KEEP(*(.fast_ram))
+        KEEP(*(.fast_ram))  /* Legacy sections, kept for backwards compatibility */
+        KEEP(*(.fast_ram.non_init))
+        KEEP(*(.fast_ram.non_init.*))
         __fast_ram_bss_start__ = .;
         KEEP(*(.fast_ram.bss))
+        KEEP(*(.fast_ram.bss.*))
         __fast_ram_bss_end__ = .;
         . = ALIGN(8);
     } > DLM
@@ -273,7 +287,7 @@ SECTIONS
         PROVIDE (_stack_safe = .);
     } > DLM
 
-    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init);
+    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init) + SIZEOF(.eh_frame) + SIZEOF(.eh_frame_hdr);
     __last_addr__ = __fast_ram_init_load_addr__ + SIZEOF(.fast_ram.init);
-    ASSERT(((__fw_size__ <= LENGTH(XPI0)) && (__last_addr__ <= (ORIGIN(XPI0) + LENGTH(XPI0)))), "******  FAILED! XPI0 has not enough space!  ******")
+    ASSERT(((__fw_size__ <= LENGTH(FLASH)) && (__last_addr__ <= (ORIGIN(FLASH) + LENGTH(FLASH)))), "******  FAILED! FLASH does not have enough space!  ******")
 }
